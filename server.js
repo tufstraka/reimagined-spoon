@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const socket = require('socket.io');
@@ -5,6 +6,9 @@ const cors = require('cors');
 const helmet = require('helmet');
 const nocache = require('nocache');
 const path = require('path');
+
+const fccTestingRoutes = require('./routes/fcctesting.js');
+const runner = require('./test-runner.js');
 
 const app = express();
 
@@ -38,14 +42,29 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views/index.html'));
 });
 
+//For FCC testing purposes
+fccTestingRoutes(app);
+
 // JSON error response for 404
 app.use((req, res, next) => {
   res.status(404).json({ error: 'Not Found' });
 });
 
 const portNum = process.env.PORT || 3000;
+// Set up server and tests
 const server = app.listen(portNum, () => {
   console.log(`Listening on port ${portNum}`);
+  if (process.env.NODE_ENV==='test') {
+    console.log('Running Tests...');
+    setTimeout(function () {
+      try {
+        runner.run();
+      } catch (error) {
+        console.log('Tests are not valid:');
+        console.error(error);
+      }
+    }, 1500);
+  }
 });
 
 const io = socket(server);
