@@ -1,4 +1,5 @@
 body {
+  font-family: 'Press Start 2P', cursive;
   margin: 20px;
 }
 
@@ -8,6 +9,8 @@ code {
 
 canvas {
   margin: auto;
+  border: 1px solid black;
+
 }
 
 .container {
