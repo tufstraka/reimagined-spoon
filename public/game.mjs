@@ -58,19 +58,11 @@ document.addEventListener('keydown', (e) => {
 setInterval(() => {
   if (collectible) {
     Object.values(players).forEach(player => {
-      if (player.collision(collectible)) {
+      if (collectible.checkCollision(player)) {
         player.score += collectible.value;
         socket.emit('updateScore', { playerId: player.id, score: player.score });
-        collectible = new Collectible({
-          x: Math.floor(Math.random() * (canvas.width - 10)),
-          y: Math.floor(Math.random() * (canvas.height - 10)),
-          value: Math.ceil(Math.random() * 5),
-          id: Date.now().toString()
-        });
-        socket.emit('newCollectible', collectible);
-        render();
+        socket.emit('newCollectible');
       }
     });
   }
 }, 100);
-
